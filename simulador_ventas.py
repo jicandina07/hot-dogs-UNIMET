@@ -50,3 +50,18 @@ class SimuladorVentas:
                     self.inventario.actualizar_stock(hotdog_vendido)
                     if hotdog_vendido["Acompañante"]:
                         self.acomp_vendidos.update(hotdog_vendido["Acompañante"])
+
+    def generar_reporte(self):
+        ventas_totales = sum([hotdog["ventas"] for hotdog in self.stats.values()])
+        hotdog_mas_vendido = max(self.stats, key = lambda hotdog: self.stats[hotdog]["ventas"])
+        print("")
+        print("----------- Reporte de Ventas de UNIMET Hot Dogs -----------")
+        print(f"Total de clientes: {self.n_clientes}")
+        print(f"Clientes que cambiaron de opinión: {self.n_cambios}")
+        print(f"Clientes que no pudieron comprar por falta de stock: {self.n_fallos}")
+        print(f"Promedio de hot dogs por cliente: {ventas_totales / self.n_clientes}")
+        print(f"Hot dog más vendido: {hotdog_mas_vendido}")
+        print(f"Hot dogs que no tuvieron stock: {[hotdog for hotdog in self.stats.values() if hotdog["fallos"] > 0]}")
+        print(f"Ingredientes que no tuvieron stock: {self.ingredientes_fallo}")
+        print(f"Acompañantes vendidos: {self.acomp_vendidos}")            
+
