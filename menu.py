@@ -55,3 +55,74 @@ class Menu:
             elif opcion == '5':
                 print("Gestor del menú de hot dogs cerrado exitosamente.")
                 break
+
+    def revisar_stock(self, hotdog):
+        return True
+
+    def agregar_hotdog(self):
+        nombre = input("Ingrese el nombre del hot dog: ")
+        categorias = [["pan", "salchicha"], ["toppings", "salsa", "acompañante"]]
+        items = []
+        for i in range(len(categorias)):
+            for cat in categorias[i]:
+                print("")
+                print("-------------------------")
+                print(f"Escogiendo {cat}...")
+                # Pedir una o más opciones dependiendo de la categoría del ingrediente
+                if i == 0:
+                    item = obtener_opcion_usuario(self.gestor_ingredientes.obtener_categoria(cat))
+                    # Revisar el stock
+                    if not self.revisar_stock(item):
+                        print("")
+                        print(f"Actualmente no hay stock suficiente de {item}.")
+                        print(f"¿Desea continuar añadiendo el hot dog {nombre}? (s/n)")
+                        if obtener_opcion_usuario(['s', 'n']) == 'n':
+                            return False
+                else:
+                    if cat == "acompañante":
+                        # Preguntar si desea añadir un acompañante
+                        print("")
+                        print("¿Desea añadir un acompañante a este hot dog (s/n)?")
+                        if obtener_opcion_usuario(['s', 'n']) == 'n':
+                            items.append('')
+                            break
+                    item = obtener_opciones_usuario(self.gestor_ingredientes.obtener_categoria(cat))
+                    # Revisar el stock de cada ingrediente
+                    for ingr in item:
+                        if not self.revisar_stock(ingr):
+                            print("")
+                            print(f"Actualmente no hay stock suficiente de {ingr}.")
+                            print(f"¿Desea continuar añadiendo el hot dog {nombre}? (s/n)")
+                            if obtener_opcion_usuario(['s', 'n']) == 'n':
+                                return False
+                # Añadir el item a la lista
+                items.append(item)
+        # Validar la longitud del pan y la salchicha
+        l_pan = self.gestor_ingredientes.obtener_tamaño("pan", items[0])
+        l_salchicha = self.gestor_ingredientes.obtener_tamaño("salchicha", items[1])
+        if not l_pan == l_salchicha:
+            print("")
+            print(f"Parece que el pan {items[0]} y la salchicha {items[1]} tienen tamaños distintos.")
+            print(f"¿Desea continuar añadiendo el hot dog {nombre}? (s/n)")
+            if obtener_opcion_usuario(['s', 'n']) == 'n':
+                return False
+        # Crear un nuevo diccionario con los datos dados
+        hotdog_nuevo = {
+            "nombre": nombre,
+            "Pan": items[0],
+            "Salchicha": items[1],
+            "toppings": items[2],
+            "salsas": items[3],
+            "acompañante": items[4]
+        }
+        # Verificar si ya existe
+        for hotdog in self.hotdogs:
+            if hotdog_nuevo == hotdog:
+                print("")
+                print(f"¡El hot dog {nombre} ya existe!")
+                return False
+        self.hotdogs.append(hotdog_nuevo)
+        print("")
+        print(f"¡Se añadió el hot dog {nombre} exitosamente!")
+        return True
+
