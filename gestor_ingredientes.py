@@ -47,3 +47,31 @@ class GestorIngredientes:
             elif opcion == '5':
                 print("Gestor de ingredientes terminado exitosamente.")
                 break
+
+    def obtener_categoria(self, categoria, mostrar=False):
+        items = self.catalogo[self.categorias.index(categoria)]
+        res = [item["nombre"] for item in items["Opciones"]]
+        if mostrar:
+            print("")
+            print(res)
+            print("")
+        return res
+
+    def obtener_tipo_en_categoria(self, categoria, mostrar=False):
+        tipos_posibles, res = [], []
+        indice_cat = self.categorias.index(categoria)
+        # Primero obtener los tipos posibles en esta categoría
+        for item in self.catalogo[indice_cat]["Opciones"]:
+            if not item["tipo"] in tipos_posibles:
+                tipos_posibles.append(item["tipo"])
+        # Obtener el tipo deseado por el usuario
+        tipo = obtener_opcion_usuario(tipos_posibles)
+        # Luego obtener los ingredientes del tipo seleccionado
+        for item in self.catalogo[indice_cat]["Opciones"]:
+            if item["tipo"] == tipo:
+                res.append(item["nombre"])
+        if mostrar:
+            print("")
+            print(res)
+            print("")
+        return res
