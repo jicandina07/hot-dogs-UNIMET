@@ -75,3 +75,61 @@ class GestorIngredientes:
             print(res)
             print("")
         return res
+
+    def agregar_ingrediente(self, cat, nombre, tipo, tamaño, unidad):
+        nuevo_item = {
+            "nombre": nombre,
+            "tipo": tipo,
+            "tamaño": tamaño,
+            "unidad": unidad
+        }
+        # Revisar si es una categoría nueva
+        if cat not in self.categorias:
+            print("Parece que esa es una nueva categoría de ingrediente.")
+            print("¿Desea continuar? (s/n): ")
+            opcion = obtener_opcion_usuario(['s', 'n'])
+            if opcion == 'n':
+                return False
+            self.catalogo.append({
+                "Categoria": cat.capitalize(),
+                "Opciones": [nuevo_item]
+            })
+            print(f"¡La categoría {cat.capitalize()} con el ingrediente {nombre} se añadieron exitosamente!")
+        else:
+            indice_cat = self.categorias.index(cat)
+            for item in self.catalogo[indice_cat]["Opciones"]:
+                if item == nuevo_item:
+                    print("¡Ese ingrediente ya existe!")
+                    return False
+            self.catalogo[indice_cat]["Opciones"].append(nuevo_item)
+            print(f"¡El ingrediente {nombre} se añadió exitosamente!")
+        return True
+    
+    def eliminar_ingrediente(self, categoria, nombre):
+        # Obtener el índice de la categoría
+        indice_cat = self.categorias.index(categoria)
+        for i, item in enumerate(self.catalogo[indice_cat]["Opciones"]):
+            if nombre == item["nombre"]:
+                indice_ingrediente = i
+                usado_en = self.menu.obtener_hotdogs_con_ingrediente(categoria, nombre)
+                if usado_en:
+                    print("")
+                    print(f"El ingrediente {nombre} se usa en  los hot dogs: {usado_en}")
+                    print(f"Si lo elimina, también se eliminarán estos hot dogs del menú.")
+                    print(f"¿Desea eliminar el ingrediente {nombre}? (s/n)")
+                    if obtener_opcion_usuario(['s', 'n']) == 'n':
+                        return False
+                self.catalogo[indice_cat]["Opciones"].pop(indice_ingrediente)
+                for hotdog in usado_en:
+                    self.menu.eliminar_hotdog(hotdog, force=True)
+                print(f"Se eliminaron el ingrediente {nombre} y los hotdogs {usado_en}.")
+                return True
+        print("No se encontró ese ingrediente en el catálogo.")
+        return False
+    
+    def obtener_tamaño(self, categoria, nombre):
+        for item in self.catalogo[self.categorias.index(categoria)]["Opciones"]:
+            if item["nombre"] == nombre:
+                return item["tamaño"]
+        # Si no se encontró, retornar None
+        return
