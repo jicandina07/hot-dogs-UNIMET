@@ -126,3 +126,30 @@ class Menu:
         print(f"¡Se añadió el hot dog {nombre} exitosamente!")
         return True
 
+    def eliminar_hotdog(self, hotdog_elim, force=False):
+        if not force and self.revisar_stock(hotdog_elim):
+            print(f"Actualmente hay stock suficiente para preparar un hot dog {hotdog_elim}.")
+            print("¿Desea eliminar el hot dog? (s/n)")
+            if obtener_opcion_usuario(['s', 'n']) == 'n':
+                return False
+        for i, hotdog in enumerate(self.hotdogs):
+            if hotdog_elim == hotdog["nombre"].lower():
+                self.hotdogs.pop(i)
+                print(f"Se eliminó el hot dog {hotdog_elim} del menú.")
+                return True
+        print("No se encontró ese hot dog en el catálogo.")
+        return False
+
+    def obtener_hotdogs_con_ingrediente(self, categoria, nombre_ingr):
+        hotdogs_con_ingrediente = []
+        if categoria == "salsa":
+            categoria += 's'
+        for hotdog in self.hotdogs:
+            try:
+                if nombre_ingr in hotdog[categoria.capitalize()]:
+                    hotdogs_con_ingrediente.append(hotdog["nombre"])
+            except KeyError:
+                if nombre_ingr in hotdog[categoria.lower()]:
+                    hotdogs_con_ingrediente.append(hotdog["nombre"])
+        return hotdogs_con_ingrediente
+
