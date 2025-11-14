@@ -1,14 +1,18 @@
-from ingrediente import Ingrediente
+import json
+from datetime import date
 from helpers import obtener_opcion_usuario
 
 class GestorIngredientes:
 
-    def __init__(self, catalogo, menu):
+    def __init__(self, catalogo):
         self.catalogo = catalogo
-        self.menu = menu
+        self.menu = None
         self.categorias = [item["Categoria"].lower() for item in self.catalogo]
+    
+    def asignar_menu(self, menu):
+        self.menu = menu
 
-    def mostrar_menu(self):
+    def mostrar_menu_principal(self):
         print("")
         print("--- Gestión de ingredientes de UNIMET Hot Dogs ---")
         print("Opciones disponibles:")
@@ -16,15 +20,27 @@ class GestorIngredientes:
         print("2. Listar productos de una categoría.")
         print("3. Añadir un ingrediente.")
         print("4. Eliminar un ingrediente.")
-        print("5. Salir del gestor.")
+        print("5. Guardar el catálogo de ingredientes.")
+        print("6. Salir del gestor de ingredientes.")
+
+    def visualizar_todos(self):
+        for i, categoria in enumerate(self.categorias):
+            print("")
+            print(f"----- {categoria.capitalize()} -----")
+            for k, item in enumerate(self.catalogo[i]["Opciones"]):
+                print(f"{k + 1}. " + item["nombre"])
 
     def gestionar(self):
         while True:
-            self.mostrar_menu()
-            opcion = obtener_opcion_usuario([str(i) for i in range(1, 6)])
+            # Actualizar categorías por si se añadió una nueva
+            self.categorias = [item["Categoria"].lower() for item in self.catalogo]
+            # Mostrar menú principal y pedir input del usuario
+            self.mostrar_menu_principal()
+            opcion = obtener_opcion_usuario([str(i) for i in range(1, 7)])
+            # Mostrar todos los ingredientes
             if opcion == '1':
-                print(self.catalogo)
-            # Listar productos en una categoría
+                self.visualizar_todos()
+            # Mostrar productos en una categoría
             if opcion == '2':
                 categoria = obtener_opcion_usuario(self.categorias)
                 self.obtener_categoria(categoria, mostrar=True)
@@ -35,17 +51,38 @@ class GestorIngredientes:
                         self.obtener_tipo_en_categoria(categoria, mostrar=True)
             # Agregar un ingrediente
             elif opcion == '3':
-                agregado = self.agregar_ingrediente()
-                if not agregado:
+                cat = input("Ingrese la categoría del ingrediente: ").lower()
+                nombre = input("Ingrese el nombre del ingrediente: ")
+                tipo = input("Ingrese el tipo del ingrediente: ")
+                unidad = input("Ingrese la unidad de medida: ")
+                while True:
+                    try:
+                        tamaño = float(input("Ingrese el tamaño del ingrediente: "))
+                        if tamaño <= 0:
+                            print("Por favor ingrese un número positivo para el tamaño.")
+                            continue
+                        break            
+                    except ValueError:
+                        print("Por favor ingrese un número para el tamaño.")
+                if not self.agregar_ingrediente(cat, nombre, tipo, tamaño, unidad):
+                    print("")
                     print("No se agregó ningún ingrediente nuevo.")
             # Eliminar un ingrediente
             elif opcion == '4':
-                eliminado = self.eliminar_ingrediente()
-                if not eliminado:
+                print("Ingrese la categoría del ingrediente a eliminar")
+                categoria = obtener_opcion_usuario(self.categorias)
+                print("Ingrese el nombre del ingrediente a eliminar")
+                nombres = [ingr["nombre"] for ingr in self.catalogo[self.categorias.index(categoria)]["Opciones"]]
+                nombre = obtener_opcion_usuario(nombres)
+                if not self.eliminar_ingrediente(categoria, nombre):
+                    print("")
                     print("No se eliminó ningún ingrediente.")
-            # Salir del gestor
+            # Guardar el catálogo de ingredientes
             elif opcion == '5':
-                print("Gestor de ingredientes terminado exitosamente.")
+                self.guardar_ingredientes()
+            # Salir del gestor
+            elif opcion == '6':
+                print("Gestor de ingredientes cerrado exitosamente.")
                 break
 
     def obtener_categoria(self, categoria, mostrar=False):
@@ -133,3 +170,10 @@ class GestorIngredientes:
                 return item["tamaño"]
         # Si no se encontró, retornar None
         return
+
+    def guardar_ingredientes(self, output=""):
+        if not output:
+            fecha = date.today().strftime("%Y-%m-%d")
+            output = f"ingredientes_{fecha}.json"
+        with open(output, 'w') as f:
+            json.dump(self.stock, f)
