@@ -1,42 +1,80 @@
-from api import cargar_datos_API
+from data import *
+from gestor_ingredientes import GestorIngredientes
+from menu import Menu
+from inventario import Inventario
 from simulador import SimuladorVentas
+from helpers import obtener_opcion_usuario
 
 
 def mostrar_menu_principal():
-    print("Por favor selecciona una de las siguientes opciones: ")
+    print("")
+    print("-------------------------------------------------")
+    print("Opciones disponibles:")
+    print("0. Cargar un estatus previo del programa.")
     print("1. Gestionar los ingredientes posibles.")
     print("2. Gestionar el inventario de ingredientes.")
     print("3. Gestionar el menú.")
     print("4. Simular un día de ventas.")
-    print("5. Salir")
+    print("5. Guardar el inventario actual de ingredientes.")
+    print("6. Salir")
+    print("-------------------------------------------------")
+    print("")
 
 def main():
-    gestor_ingredientes, inventario, menu = cargar_datos_API()
+    # Cargar los datos de la API e inicializar las clases
+    ingredientes, menu = cargar_datos_API()
+    gestor_ingredientes, menu = GestorIngredientes(ingredientes), Menu(menu)
+    # Asignar menú a gestor de ingredientes y vice versa
+    gestor_ingredientes.asignar_menu(menu)
+    menu.asignar_gestor_ingredientes(gestor_ingredientes)
+    # Inventario y simulador
+    inventario = Inventario(gestor_ingredientes)
+    inventario.generar_stock_aleatorio()
+    # Asignar el inventario al menú
+    menu.asignar_inventario(inventario)
     simulador = SimuladorVentas(gestor_ingredientes, inventario, menu)
+    # Imprimir bienvenida y mostrar el menú principal
     print("¡Bienvenido a UNIMET Hot Dogs!")
     while True:
         mostrar_menu_principal()
         # Preguntar al usuario la acción a realizar
-        try:
-            opcion = int(input("Ingresa tu opción: "))
-        # Verificar que el input sea correcto
-        except TypeError:
-            print("Opción inválida. Por favor ingresa un número entre 1 y 5.")
-        # Ejecutar la opción escogida
-        if opcion == 1:
-            gestor_ingredientes.gestionar()     
-        elif opcion == 2:
+        opcion = obtener_opcion_usuario([str(i) for i in range(7)])
+        # Cargar estatus previo del sistema
+        if opcion == '0':
+            ingr_prev = input("Ingrese el nombre del archivo con los nuevos ingredientes: ")
+            inventario_prev = input("Ingrese el nombre del archivo con las ventas: ")
+            print("")
+            ingredientes, inventario = cargar_estatus_previo(archivos=[ingr_prev, inventario_prev])
+            if not ingr_prev or not inventario_prev:
+                print("")
+                print("Error al cargar los datos suministrados.")
+                print("Continuando con los datos ya cargados...")
+            else:
+                gestor_ingredientes.catalogo = ingr_prev
+                inventario.stock = inventario_prev
+        # Gestión de ingredientes
+        if opcion == '1':
+            gestor_ingredientes.gestionar()
+        # Gestión de inventario
+        elif opcion == '2':
             inventario.gestionar()
-        elif opcion == 3:
+        # Gestión de menú
+        elif opcion == '3':
             menu.gestionar()
-        elif opcion == 4:
+        # Simulador de ventas
+        elif opcion == '4':
             simulador.simular_dia()
             simulador.generar_reporte()
-        elif opcion == 5:
+        # Guardar el inventario actual
+        elif opcion == '5':
+            archivo = input("Ingrese el nombre del archivo que desea para guardar el stock: ")
+            inventario.guardar_stock(archivo)
+        # Salir del programa
+        elif opcion == '6':
+            print("")
             print("Gracias por usar nuestro sistema. ¡Hasta pronto!")
+            print("")
             break
-        else:
-            print("Opción inválida. Por favor ingresa un número entre 1 y 5.")
 
 if __name__ == "__main__":
     main()
