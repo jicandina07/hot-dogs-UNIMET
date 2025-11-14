@@ -28,7 +28,7 @@ def main():
     gestor_ingredientes.asignar_menu(menu)
     menu.asignar_gestor_ingredientes(gestor_ingredientes)
     # Inventario y simulador
-    inventario = Inventario(gestor_ingredientes)
+    inventario = Inventario(gestor_ingredientes, menu)
     inventario.generar_stock_aleatorio()
     # Asignar el inventario al menú
     menu.asignar_inventario(inventario)
