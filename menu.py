@@ -1,3 +1,4 @@
+from requests.exceptions import InvalidJSONError
 from helpers import obtener_opcion_usuario, obtener_opciones_usuario
 
 
@@ -9,6 +10,9 @@ class Menu:
 
     def asignar_gestor_ingredientes(self, gestor_ingredientes):
         self.gestor_ingredientes = gestor_ingredientes
+
+    def asignar_inventario(self, inventario):
+        self.inventario = inventario
 
     def mostrar_menu_principal(self):
         print("")
@@ -36,10 +40,19 @@ class Menu:
             # Revisar el stock de ingredientes para un hot dog
             if opcion == '2':
                 hotdog = input("Por favor ingrese el nombre del hot dog: ").lower()
-                if self.revisar_stock(hotdog):
-                    print(f"¡Sí hay stock suficiente para un hot dog {hotdog}!")
+                for hd in self.hotdogs:
+                    if hd["nombre"] == hotdog:
+                        if self.validar_stock(hotdog):
+                            print("")
+                            print(f"¡Sí hay stock suficiente para un hot dog {hotdog}!")
+                            break
+                        else:
+                            print("")
+                            print(f"Lo sentimos, no hay stock suficiente para el hot dog {hotdog}.")
+                            break
                 else:
-                    print(f"Lo sentimos, no hay stock suficiente para el hot dog {hotdog}.")
+                    print("")
+                    print(f"¡El hot dog {hotdog} no está en el menú!")
             # Agregar un hot dog nuevo
             elif opcion == '3':
                 if not self.agregar_hotdog():
@@ -56,9 +69,6 @@ class Menu:
                 print("Gestor del menú de hot dogs cerrado exitosamente.")
                 break
 
-    def revisar_stock(self, hotdog):
-        return True
-
     def agregar_hotdog(self):
         nombre = input("Ingrese el nombre del hot dog: ")
         categorias = [["pan", "salchicha"], ["toppings", "salsa", "acompañante"]]
@@ -72,7 +82,7 @@ class Menu:
                 if i == 0:
                     item = obtener_opcion_usuario(self.gestor_ingredientes.obtener_categoria(cat))
                     # Revisar el stock
-                    if not self.revisar_stock(item):
+                    if not self.validar_stock(item):
                         print("")
                         print(f"Actualmente no hay stock suficiente de {item}.")
                         print(f"¿Desea continuar añadiendo el hot dog {nombre}? (s/n)")
@@ -89,7 +99,7 @@ class Menu:
                     item = obtener_opciones_usuario(self.gestor_ingredientes.obtener_categoria(cat))
                     # Revisar el stock de cada ingrediente
                     for ingr in item:
-                        if not self.revisar_stock(ingr):
+                        if not self.inventario.revisar_stock(ingr):
                             print("")
                             print(f"Actualmente no hay stock suficiente de {ingr}.")
                             print(f"¿Desea continuar añadiendo el hot dog {nombre}? (s/n)")
@@ -127,16 +137,17 @@ class Menu:
         return True
 
     def eliminar_hotdog(self, hotdog_elim, force=False):
-        if not force and self.revisar_stock(hotdog_elim):
-            print(f"Actualmente hay stock suficiente para preparar un hot dog {hotdog_elim}.")
-            print("¿Desea eliminar el hot dog? (s/n)")
-            if obtener_opcion_usuario(['s', 'n']) == 'n':
-                return False
         for i, hotdog in enumerate(self.hotdogs):
             if hotdog_elim == hotdog["nombre"].lower():
+              if not force and self.validar_stock(hotdog_elim):
+                print(f"Actualmente hay stock suficiente para preparar un hot dog {hotdog_elim}.")
+                print("¿Desea eliminar el hot dog? (s/n)")
+                if obtener_opcion_usuario(['s', 'n']) == 'n':
+                    return False
                 self.hotdogs.pop(i)
                 print(f"Se eliminó el hot dog {hotdog_elim} del menú.")
                 return True
+        print("")
         print("No se encontró ese hot dog en el catálogo.")
         return False
 
@@ -153,3 +164,15 @@ class Menu:
                     hotdogs_con_ingrediente.append(hotdog["nombre"])
         return hotdogs_con_ingrediente
 
+    def validar_stock(self, hotdog):
+        for hd in self.hotdogs:
+            if hd["nombre"] == hotdog:
+                for ingrediente in list(hd.values())[1:]:
+                    if type(ingrediente) == list:
+                        for item in ingrediente:
+                            if not self.inventario.revisar_stock(item):
+                                return False
+                    else:
+                        if not self.inventario.revisar_stock(ingrediente):
+                            return False
+        return True
