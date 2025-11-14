@@ -139,11 +139,13 @@ class Menu:
     def eliminar_hotdog(self, hotdog_elim, force=False):
         for i, hotdog in enumerate(self.hotdogs):
             if hotdog_elim == hotdog["nombre"].lower():
-              if not force and self.validar_stock(hotdog_elim):
-                print(f"Actualmente hay stock suficiente para preparar un hot dog {hotdog_elim}.")
-                print("¿Desea eliminar el hot dog? (s/n)")
-                if obtener_opcion_usuario(['s', 'n']) == 'n':
-                    return False
+                # Primero verificar si hay stock y preguntar si desea continuar
+                if not force and self.validar_stock(hotdog_elim):
+                    print(f"Actualmente hay stock suficiente para preparar un hot dog {hotdog_elim}.")
+                    print("¿Desea eliminar el hot dog? (s/n)")
+                    if obtener_opcion_usuario(['s', 'n']) == 'n':
+                        return False
+                # Eliminarlo
                 self.hotdogs.pop(i)
                 print(f"Se eliminó el hot dog {hotdog_elim} del menú.")
                 return True
@@ -168,7 +170,9 @@ class Menu:
         for hd in self.hotdogs:
             if hd["nombre"] == hotdog:
                 for ingrediente in list(hd.values())[1:]:
-                    if type(ingrediente) == list:
+                    if not ingrediente:
+                        continue
+                    elif type(ingrediente) == list:
                         for item in ingrediente:
                             if not self.inventario.revisar_stock(item):
                                 return False
