@@ -177,3 +177,5 @@ class GestorIngredientes:
             output = f"ingredientes_{fecha}.json"
         with open(output, 'w') as f:
             json.dump(self.stock, f)
+        print("")
+        print(f"Se guardó el catálogo actual de ingredientes en el archivo {output}.")
