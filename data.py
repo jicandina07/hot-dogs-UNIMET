@@ -17,7 +17,7 @@ def cargar_datos_API():
     return ingredientes, menu
 
 
-def cargar_estatus_previo(archivos=["ingredientes_nuevos.json", "ventas.json"]):
+def cargar_estatus_previo(archivos=["ingredientes.json", "inventario.json"]):
     res = []
     for archivo in archivos:
         if not os.path.exists(archivo):
