@@ -2,7 +2,7 @@ from data import *
 from gestor_ingredientes import GestorIngredientes
 from menu import Menu
 from inventario import Inventario
-from simulador import SimuladorVentas
+from simulador_ventas import SimuladorVentas
 from helpers import obtener_opcion_usuario
 
 
