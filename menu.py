@@ -1,3 +1,5 @@
+import json
+from datetime import date
 from requests.exceptions import InvalidJSONError
 from helpers import obtener_opcion_usuario, obtener_opciones_usuario
 
@@ -22,12 +24,13 @@ class Menu:
         print("2. Ver si hay stock de ingredientes para un hot dog específico.")
         print("3. Añadir un hot dog nuevo.")
         print("4. Eliminar un hot dog.")
-        print("5. Salir del gestor del menú.")
+        print("5. Guardar el menú actual de hot dogs.")
+        print("6. Salir del gestor del menú.")
 
     def gestionar(self):
         while True:
             self.mostrar_menu_principal()
-            opcion = obtener_opcion_usuario([str(i) for i in range(1, 6)])
+            opcion = obtener_opcion_usuario([str(i) for i in range(1, 7)])
             # Mostrar todos los hot dogs
             if opcion == '1':
                 print("")
@@ -64,8 +67,15 @@ class Menu:
                 if not self.eliminar_hotdog(hotdog_elim):
                     print("")
                     print("No se eliminó ningún hot dog.")
-            # Salir del gestor
+            # Guardar el menú actual
             elif opcion == '5':
+                fecha = date.today().strftime("%Y-%m-%d")
+                output = f"menu_{fecha}.json"
+                with open(output, 'w') as f:
+                    json.dump(self.hotdogs, f)
+            # Salir del gestor
+            elif opcion == '6':
+                print("")
                 print("Gestor del menú de hot dogs cerrado exitosamente.")
                 break
 
