@@ -16,7 +16,7 @@ def mostrar_menu_principal():
     print("3. Gestionar el menú.")
     print("4. Simular un día de ventas.")
     print("5. Guardar el inventario actual de ingredientes.")
-    print("6. Salir")
+    print("6. Salir del programa.")
     print("-------------------------------------------------")
     print("")
 
@@ -31,6 +31,7 @@ def main():
     inventario = Inventario(gestor_ingredientes, menu)
     inventario.generar_stock_aleatorio()
     # Asignar el inventario al menú
+    gestor_ingredientes.asignar_inventario(inventario)
     menu.asignar_inventario(inventario)
     simulador = SimuladorVentas(gestor_ingredientes, inventario, menu)
     # Imprimir bienvenida y mostrar el menú principal
@@ -41,17 +42,25 @@ def main():
         opcion = obtener_opcion_usuario([str(i) for i in range(7)])
         # Cargar estatus previo del sistema
         if opcion == '0':
-            ingr_prev = input("Ingrese el nombre del archivo con los nuevos ingredientes: ")
-            inventario_prev = input("Ingrese el nombre del archivo con las ventas: ")
             print("")
-            ingredientes, inventario = cargar_estatus_previo(archivos=[ingr_prev, inventario_prev])
-            if not ingr_prev or not inventario_prev:
+            ingr_prev = input("Ingrese el nombre del archivo con los ingredientes: ")
+            inventario_prev = input("Ingrese el nombre del archivo con el inventario: ")
+            menu_prev = input("Ingrese el nombre del archivo con el menú de hot dogs: ")
+            print("")
+            ingr_prev = cargar_archivo(ingr_prev)
+            inventario_prev = cargar_archivo(inventario_prev)
+            menu_prev = cargar_archivo(menu_prev)
+            if not ingr_prev or not inventario_prev or not menu_prev:
                 print("")
                 print("Error al cargar los datos suministrados.")
                 print("Continuando con los datos ya cargados...")
+                print("")
             else:
                 gestor_ingredientes.catalogo = ingr_prev
                 inventario.stock = inventario_prev
+                menu.hotdogs = menu_prev
+                print("")
+                print("¡Se cargaron los archivos exitosamente!")
         # Gestión de ingredientes
         if opcion == '1':
             gestor_ingredientes.gestionar()
