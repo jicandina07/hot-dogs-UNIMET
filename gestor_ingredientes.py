@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from random import randint
 from helpers import obtener_opcion_usuario
 
 class GestorIngredientes:
@@ -11,6 +12,9 @@ class GestorIngredientes:
     
     def asignar_menu(self, menu):
         self.menu = menu
+
+    def asignar_inventario(self, inventario):
+        self.inventario = inventario
 
     def mostrar_menu_principal(self):
         print("")
@@ -82,6 +86,7 @@ class GestorIngredientes:
                 self.guardar_ingredientes()
             # Salir del gestor
             elif opcion == '6':
+                print("")
                 print("Gestor de ingredientes cerrado exitosamente.")
                 break
 
@@ -131,6 +136,7 @@ class GestorIngredientes:
                 "Categoria": cat.capitalize(),
                 "Opciones": [nuevo_item]
             })
+            print("")
             print(f"¡La categoría {cat.capitalize()} con el ingrediente {nombre} se añadieron exitosamente!")
         else:
             indice_cat = self.categorias.index(cat)
@@ -139,6 +145,8 @@ class GestorIngredientes:
                     print("¡Ese ingrediente ya existe!")
                     return False
             self.catalogo[indice_cat]["Opciones"].append(nuevo_item)
+            self.inventario.stock[nuevo_item["nombre"]] = randint(5, 30)
+            print("")
             print(f"¡El ingrediente {nombre} se añadió exitosamente!")
         return True
     
@@ -157,6 +165,7 @@ class GestorIngredientes:
                     if obtener_opcion_usuario(['s', 'n']) == 'n':
                         return False
                 self.catalogo[indice_cat]["Opciones"].pop(indice_ingrediente)
+                self.inventario.stock.pop(nombre)
                 for hotdog in usado_en:
                     self.menu.eliminar_hotdog(hotdog, force=True)
                 print(f"Se eliminaron el ingrediente {nombre} y los hotdogs {usado_en}.")
@@ -176,6 +185,6 @@ class GestorIngredientes:
             fecha = date.today().strftime("%Y-%m-%d")
             output = f"ingredientes_{fecha}.json"
         with open(output, 'w') as f:
-            json.dump(self.stock, f)
+            json.dump(self.catalogo, f)
         print("")
         print(f"Se guardó el catálogo actual de ingredientes en el archivo {output}.")
