@@ -17,12 +17,10 @@ def cargar_datos_API():
     return ingredientes, menu
 
 
-def cargar_estatus_previo(archivos=["ingredientes.json", "inventario.json"]):
-    res = []
-    for archivo in archivos:
-        if not os.path.exists(archivo):
-            print(f"ERROR: el archivo {archivo} no existe. Por favor intente de nuevo.")
-            return None, None
-        with open(archivo) as f:
-            res.append(json.load(f))
-    return res
+def cargar_archivo(archivo):
+    if not os.path.exists(archivo):
+        print(f"ERROR: el archivo {archivo} no existe. Por favor intente de nuevo.")
+        return None, None
+    with open(archivo) as f:
+        return json.load(f)
+    return None
