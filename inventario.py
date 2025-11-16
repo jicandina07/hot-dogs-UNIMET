@@ -21,14 +21,15 @@ class Inventario:
         print("Opciones disponibles:")
         print("1. Ver todo el inventario actual.")
         print("2. Buscar la existencia de un ingrediente específico.")
-        print("3. Listar el stock de ingredientes de una categoría")
+        print("3. Listar el stock de ingredientes de una categoría.")
         print("4. Actualizar el stock de un ingrediente.")
-        print("5. Salir del gestor de inventario.")
+        print("5. Guardar el stock actual de ingredientes.")
+        print("6. Salir del gestor de inventario.")
 
     def gestionar(self):
         while True:
             self.mostrar_menu_principal()
-            opcion = obtener_opcion_usuario([str(i) for i in range(1, 6)])
+            opcion = obtener_opcion_usuario([str(i) for i in range(1, 7)])
             # Mostrar todo el inventario
             if opcion == '1':
                 print("")
@@ -37,9 +38,9 @@ class Inventario:
                 print("--------------------------------")
             # Revisar el stock de un ingrediente
             if opcion == '2':
-                ingrediente = input("Por favor ingrese el nombre del ingrediente: ").lower()
+                ingrediente = input("Por favor ingrese el nombre del ingrediente: ")
                 for ingr, cant in self.stock.items():
-                    if ingr == ingrediente:
+                    if ingr.lower() == ingrediente.lower():
                         print("")
                         print(f"Stock de {ingrediente}: {cant}")
                         break
@@ -48,18 +49,40 @@ class Inventario:
                     print(f"¡El ingrediente {ingrediente} no está en el inventario!")
             # Agregar un hot dog nuevo
             elif opcion == '3':
-                pass
-            # Eliminar un hot dog
+                categoria = obtener_opcion_usuario(self.gestor_ingredientes.categorias)
+                idx_cat = self.gestor_ingredientes.categorias.index(categoria)
+                for ingr in self.gestor_ingredientes.catalogo[idx_cat]["Opciones"]:
+                    print(f"Stock de {ingr['nombre']}: {self.stock[ingr['nombre']]}")
+            # Actualizar stock de un ingrediente
             elif opcion == '4':
-                pass
-            # Salir del gestor
+                ingrediente = obtener_opcion_usuario(list(self.stock.keys()))
+                try:
+                    cantidad = int(input(f"Ingrese el nuevo stock de {ingrediente}: "))
+                    if cantidad < 0:
+                        print("")
+                        print("Ingrese un número no negativo.")
+                        continue
+                    self.stock[ingrediente] = cantidad
+                    print("")
+                    print(f"Se actualizó el stock de {ingrediente} a {cantidad}.")
+                except ValueError:
+                    print("")
+                    print("Por favor ingrese un número entero.")
+            # Guardar el stock actual
             elif opcion == '5':
+                self.guardar_stock()
+            # Salir del gestor
+            elif opcion == '6':
+                print("")
                 print("Gestor de inventario cerrado exitosamente.")
                 break
 
     # Verificar que haya stock disponible
     def revisar_stock(self, nombre_ingr):
-        return self.stock[nombre_ingr] > 0
+        try:
+            return self.stock[nombre_ingr] > 0
+        except KeyError:
+            return self.stock[nombre_ingr.capitalize()] > 0
 
     # Restar del stock una cantidad de un ingrediente
     def restar_stock(self, nombre_ingr, cantidad):
