@@ -1,4 +1,4 @@
-from data import *
+from data import ManejadorData
 from gestor_ingredientes import GestorIngredientes
 from menu import Menu
 from inventario import Inventario
@@ -9,6 +9,7 @@ from helpers import obtener_opcion_usuario
 
 class Main:
     def mostrar_menu_principal(self):
+        """ Muestra el menú principal del programa. """
         print("")
         print("-------------------------------------------------")
         print("Opciones disponibles:")
@@ -23,8 +24,15 @@ class Main:
         print("")
     
     def main(self):
+        """
+        Función principal que inicializa el sistema y maneja el flujo principal.
+        
+        Carga los datos, inicializa los componentes y maneja el menú principal
+        del sistema UNIMET Hot Dogs.
+        """
         # Cargar los datos de la API e inicializar las clases
-        ingredientes, menu = cargar_datos_API()
+        manejador_data = ManejadorData()
+        ingredientes, menu = manejador_data.cargar_datos_API()
         gestor_ingredientes, menu = GestorIngredientes(ingredientes), Menu(menu)
         # Asignar menú a gestor de ingredientes y vice versa
         gestor_ingredientes.asignar_menu(menu)
@@ -49,9 +57,9 @@ class Main:
                 inventario_prev = input("Ingrese el nombre del archivo con el inventario: ")
                 menu_prev = input("Ingrese el nombre del archivo con el menú de hot dogs: ")
                 print("")
-                ingr_prev = cargar_archivo(ingr_prev)
-                inventario_prev = cargar_archivo(inventario_prev)
-                menu_prev = cargar_archivo(menu_prev)
+                ingr_prev = manejador_data.cargar_archivo(ingr_prev)
+                inventario_prev = manejador_data.cargar_archivo(inventario_prev)
+                menu_prev = manejador_data.cargar_archivo(menu_prev)
                 if not ingr_prev or not inventario_prev or not menu_prev:
                     print("")
                     print("Error al cargar los datos suministrados.")
@@ -86,7 +94,8 @@ class Main:
                 print("Gracias por usar nuestro sistema. ¡Hasta pronto!")
                 print("")
                 break
-    
+
+
 if __name__ == "__main__":
     main = Main()
     main.main()
