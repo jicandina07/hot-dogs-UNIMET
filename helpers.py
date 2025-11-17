@@ -1,4 +1,13 @@
 def obtener_opcion_usuario(opciones):
+    """
+    Solicita al usuario que seleccione una opción de una lista.
+    
+    Args:
+        opciones (list): Lista de opciones válidas
+        
+    Retorna:
+        str: Opción seleccionada por el usuario
+    """
     while True:
         print("")
         opcion = input(f"Por favor ingrese una opción de {opciones}: ")
@@ -10,7 +19,17 @@ def obtener_opcion_usuario(opciones):
         break
     return opcion
 
+
 def obtener_opciones_usuario(opciones):
+    """
+    Solicita al usuario que seleccione múltiples opciones de una lista.
+    
+    Args:
+        opciones (list): Lista de opciones válidas
+        
+    Retorna:
+        list: Lista de opciones seleccionadas por el usuario
+    """
     res = []
     while True:
         # Preguntar si quiere seguir añadiendo si ya lo ha hecho
