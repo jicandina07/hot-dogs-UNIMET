@@ -57,15 +57,15 @@ class GestorIngredientes:
     def gestionar(self):
         """ Gestiona el menú principal del sistema de ingredientes. """
         while True:
-            # Actualizar categorías por si se añadió una nueva
+            
             self.categorias = [item["Categoria"].lower() for item in self.catalogo]
-            # Mostrar menú principal y pedir input del usuario
+            
             self.mostrar_menu_principal()
             opcion = obtener_opcion_usuario([str(i) for i in range(1, 7)])
-            # Mostrar todos los ingredientes
+            
             if opcion == '1':
                 self.visualizar_todos()
-            # Mostrar productos en una categoría
+            
             if opcion == '2':
                 categoria = obtener_opcion_usuario(self.categorias)
                 self.obtener_categoria(categoria, mostrar=True)
@@ -74,7 +74,7 @@ class GestorIngredientes:
                     opcion2 = obtener_opcion_usuario(['s', 'n'])
                     if opcion2 == 's':
                         self.obtener_tipo_en_categoria(categoria, mostrar=True)
-            # Agregar un ingrediente
+           
             elif opcion == '3':
                 cat = input("Ingrese la categoría del ingrediente: ").lower()
                 nombre = input("Ingrese el nombre del ingrediente: ")
@@ -92,7 +92,7 @@ class GestorIngredientes:
                 if not self.agregar_ingrediente(cat, nombre, tipo, tamaño, unidad):
                     print("")
                     print("No se agregó ningún ingrediente nuevo.")
-            # Eliminar un ingrediente
+            
             elif opcion == '4':
                 print("Ingrese la categoría del ingrediente a eliminar")
                 categoria = obtener_opcion_usuario(self.categorias)
@@ -102,10 +102,10 @@ class GestorIngredientes:
                 if not self.eliminar_ingrediente(categoria, nombre):
                     print("")
                     print("No se eliminó ningún ingrediente.")
-            # Guardar el catálogo de ingredientes
+            
             elif opcion == '5':
                 self.guardar_ingredientes()
-            # Salir del gestor
+            
             elif opcion == '6':
                 print("")
                 print("Gestor de ingredientes cerrado exitosamente.")
@@ -143,13 +143,13 @@ class GestorIngredientes:
         """
         tipos_posibles, res = [], []
         indice_cat = self.categorias.index(categoria)
-        # Primero obtener los tipos posibles en esta categoría
+        
         for item in self.catalogo[indice_cat]["Opciones"]:
             if not item["tipo"] in tipos_posibles:
                 tipos_posibles.append(item["tipo"])
-        # Obtener el tipo deseado por el usuario
+        
         tipo = obtener_opcion_usuario(tipos_posibles)
-        # Luego obtener los ingredientes del tipo seleccionado
+        
         for item in self.catalogo[indice_cat]["Opciones"]:
             if item["tipo"] == tipo:
                 res.append(item["nombre"])
@@ -215,7 +215,7 @@ class GestorIngredientes:
         Retorna:
             bool: True si se eliminó exitosamente, False en caso contrario
         """
-        # Obtener el índice de la categoría
+        
         indice_cat = self.categorias.index(categoria)
         for i, item in enumerate(self.catalogo[indice_cat]["Opciones"]):
             if nombre == item["nombre"]:
