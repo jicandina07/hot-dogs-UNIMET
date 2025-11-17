@@ -9,6 +9,12 @@ class SimuladorVentas:
         self.gestor_ingredientes = gestor_ingredientes
 
     def simular_dia(self):
+        """
+        Genera y muestra un reporte detallado de las ventas del día simulado.
+        
+        Incluye estadísticas de clientes, ventas, productos más vendidos,
+        y problemas de inventario.
+        """
         # Número aleatorio de clientes
         self.n_clientes = randint(0, 200)
         # Número de clientes que cambiaron de opinión
@@ -76,6 +82,12 @@ class SimuladorVentas:
                         self.acomp_vendidos.update(hotdog_vendido["Acompañante"])
 
     def generar_reporte(self):
+        """
+        Genera y muestra un reporte detallado de las ventas del día simulado.
+        
+        Incluye estadísticas de clientes, ventas, productos más vendidos,
+        y problemas de inventario.
+        """
         ventas_totales = sum([hotdog["ventas"] for hotdog in self.stats.values()])
         hotdog_mas_vendido = max(self.stats, key=lambda hotdog: self.stats[hotdog]["ventas"])
         print("")
