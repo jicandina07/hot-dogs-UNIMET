@@ -205,7 +205,7 @@ class GestorIngredientes:
         return True
     
     def eliminar_ingrediente(self, categoria, nombre):
-         """
+        """
         Elimina un ingrediente del catálogo.
         
         Args:
