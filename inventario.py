@@ -40,13 +40,13 @@ class Inventario:
         while True:
             self.mostrar_menu_principal()
             opcion = obtener_opcion_usuario([str(i) for i in range(1, 7)])
-            # Mostrar todo el inventario
+            
             if opcion == '1':
                 print("")
                 print("----- Inventario UNIMET Hot Dogs -----")
                 self.visualizar()
                 print("--------------------------------")
-            # Revisar el stock de un ingrediente
+        
             if opcion == '2':
                 ingrediente = input("Por favor ingrese el nombre del ingrediente: ")
                 for ingr, cant in self.stock.items():
@@ -57,13 +57,13 @@ class Inventario:
                 else:
                     print("")
                     print(f"¡El ingrediente {ingrediente} no está en el inventario!")
-            # Agregar un hot dog nuevo
+           
             elif opcion == '3':
                 categoria = obtener_opcion_usuario(self.gestor_ingredientes.categorias)
                 idx_cat = self.gestor_ingredientes.categorias.index(categoria)
                 for ingr in self.gestor_ingredientes.catalogo[idx_cat]["Opciones"]:
                     print(f"Stock de {ingr['nombre']}: {self.stock[ingr['nombre']]}")
-            # Actualizar stock de un ingrediente
+            
             elif opcion == '4':
                 ingrediente = obtener_opcion_usuario(list(self.stock.keys()))
                 try:
@@ -78,16 +78,16 @@ class Inventario:
                 except ValueError:
                     print("")
                     print("Por favor ingrese un número entero.")
-            # Guardar el stock actual
+            
             elif opcion == '5':
                 self.guardar_stock()
-            # Salir del gestor
+            
             elif opcion == '6':
                 print("")
                 print("Gestor de inventario cerrado exitosamente.")
                 break
 
-    # Verificar que haya stock disponible
+  
     def revisar_stock(self, nombre_ingr):
         """
         Verifica si hay stock disponible de un ingrediente.
@@ -103,7 +103,7 @@ class Inventario:
         except KeyError:
             return self.stock[nombre_ingr.capitalize()] > 0
 
-    # Restar del stock una cantidad de un ingrediente
+    
     def restar_stock(self, nombre_ingr, cantidad):
         """
         Resta una cantidad del stock de un ingrediente.
@@ -134,26 +134,26 @@ class Inventario:
             output (str): Nombre del archivo de salida. Si está vacío, 
                          genera uno automáticamente con la fecha.
         """
-        # Generar un nombre del archivo con la fecha de hoy si no fue dado
+        
         if not output:
             fecha = date.today().strftime("%Y-%m-%d")
             output = f"inventario_{fecha}.json"
-        # Guardar los datos
+        
         with open(output, 'w') as f:
             json.dump(self.stock, f)
         print("")
         print(f"Se guardó el inventario actual en el archivo {output}")
 
-    # Generar un inventario al azar
+    
     def generar_stock_aleatorio(self):
         """ Genera un stock aleatorio para todos los ingredientes. """
         self.stock = {}
-        # Generar un número aleatorio de stock para cada ingrediente
+        
         for item in self.gestor_ingredientes.catalogo:
             for ingrediente in item["Opciones"]:
                 self.stock[ingrediente["nombre"]] = randint(0, 30)
 
-    # Cargar estatus previo del código
+    
     def cargar_stock_previo(self, archivo):
         """
         Carga un stock previo desde un archivo JSON.
