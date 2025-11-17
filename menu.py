@@ -7,16 +7,35 @@ from helpers import obtener_opcion_usuario, obtener_opciones_usuario
 class Menu:
 
     def __init__(self, hotdogs):
+        """
+        Inicializa el menú con la lista de hot dogs disponibles.
+        
+        Args:
+            hotdogs: Lista de diccionarios con la información de los hot dogs
+        """
         self.hotdogs = hotdogs
         self.gestor_ingredientes = None
 
     def asignar_gestor_ingredientes(self, gestor_ingredientes):
+        """
+        Asigna el gestor de ingredientes al menú.
+        
+        Args:
+            gestor_ingredientes: Instancia del gestor de ingredientes
+        """
         self.gestor_ingredientes = gestor_ingredientes
 
     def asignar_inventario(self, inventario):
+        """
+        Asigna el inventario al menú.
+        
+        Args:
+            inventario: Instancia del inventario
+        """
         self.inventario = inventario
 
     def mostrar_menu_principal(self):
+        """ Muestra las opciones principales del gestor del menú. """
         print("")
         print("--- Gestión del menú de hot dogs de UNIMET Hot Dogs ---")
         print("Opciones disponibles:")
@@ -28,6 +47,7 @@ class Menu:
         print("6. Salir del gestor del menú.")
 
     def gestionar(self):
+        """ Se encarga de la ejecutar las funciones principales de la clase Menu."""
         while True:
             self.mostrar_menu_principal()
             opcion = obtener_opcion_usuario([str(i) for i in range(1, 7)])
@@ -80,6 +100,12 @@ class Menu:
                 break
 
     def agregar_hotdog(self):
+        """
+        Agrega un nuevo hot dog al menú mediante interacción con el usuario.
+        
+        Retorna:
+            bool: True si se agregó exitosamente, False en caso contrario
+        """
         nombre = input("Ingrese el nombre del hot dog: ")
         categorias = [["pan", "salchicha"], ["toppings", "salsa", "acompañante"]]
         items = []
@@ -147,6 +173,16 @@ class Menu:
         return True
 
     def eliminar_hotdog(self, hotdog_elim, force=False):
+        """
+        Elimina un hot dog del menú.
+        
+        Args:
+            hotdog_elim (str): Nombre del hot dog a eliminar
+            force (bool): Si es True, elimina sin confirmación
+            
+        Retorna:
+            bool: True si se eliminó exitosamente, False en caso contrario
+        """
         for i, hotdog in enumerate(self.hotdogs):
             if hotdog_elim == hotdog["nombre"].lower():
                 # Primero verificar si hay stock y preguntar si desea continuar
@@ -164,6 +200,16 @@ class Menu:
         return False
 
     def obtener_hotdogs_con_ingrediente(self, categoria, nombre_ingr):
+        """
+        Obtiene los hot dogs que contienen un ingrediente específico.
+        
+        Args:
+            categoria (str): Categoría del ingrediente
+            nombre_ingr (str): Nombre del ingrediente
+            
+        Retorna:
+            list: Lista de nombres de hot dogs que contienen el ingrediente
+        """
         hotdogs_con_ingrediente = []
         if categoria == "salsa":
             categoria += 's'
@@ -177,6 +223,15 @@ class Menu:
         return hotdogs_con_ingrediente
 
     def validar_stock(self, hotdog):
+        """
+        Valida si hay stock suficiente para preparar un hot dog.
+        
+        Args:
+            hotdog (str): Nombre del hot dog a validar
+            
+        Retorna:
+            bool: True si hay stock suficiente, False en caso contrario
+        """
         for hd in self.hotdogs:
             if hd["nombre"] == hotdog:
                 for ingrediente in list(hd.values())[1:]:
