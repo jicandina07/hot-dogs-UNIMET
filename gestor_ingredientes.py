@@ -6,17 +6,36 @@ from helpers import obtener_opcion_usuario
 class GestorIngredientes:
 
     def __init__(self, catalogo):
+        """
+        Inicializa el gestor de ingredientes con el catálogo.
+        
+        Args:
+            catalogo: Lista de categorías con sus ingredientes
+        """
         self.catalogo = catalogo
         self.menu = None
         self.categorias = [item["Categoria"].lower() for item in self.catalogo]
     
     def asignar_menu(self, menu):
+        """
+        Asigna el menú al gestor de ingredientes.
+        
+        Args:
+            menu: Instancia del menú
+        """
         self.menu = menu
 
     def asignar_inventario(self, inventario):
+        """
+        Asigna el inventario al gestor de ingredientes.
+        
+        Args:
+            inventario: Instancia del inventario
+        """
         self.inventario = inventario
 
     def mostrar_menu_principal(self):
+        """ Muestra las opciones principales del gestor de ingredientes. """
         print("")
         print("--- Gestión de ingredientes de UNIMET Hot Dogs ---")
         print("Opciones disponibles:")
@@ -28,6 +47,7 @@ class GestorIngredientes:
         print("6. Salir del gestor de ingredientes.")
 
     def visualizar_todos(self):
+        """ Imprime todos los ingredientes del catálogo. """
         for i, categoria in enumerate(self.categorias):
             print("")
             print(f"----- {categoria.capitalize()} -----")
@@ -35,6 +55,7 @@ class GestorIngredientes:
                 print(f"{k + 1}. " + item["nombre"])
 
     def gestionar(self):
+        """ Gestiona el menú principal del sistema de ingredientes. """
         while True:
             # Actualizar categorías por si se añadió una nueva
             self.categorias = [item["Categoria"].lower() for item in self.catalogo]
@@ -91,6 +112,16 @@ class GestorIngredientes:
                 break
 
     def obtener_categoria(self, categoria, mostrar=False):
+        """
+        Obtiene los ingredientes de una categoría específica.
+        
+        Args:
+            categoria (str): Nombre de la categoría
+            mostrar (bool): Si es True, muestra los resultados
+            
+        Retorna:
+            list: Lista de nombres de ingredientes en la categoría
+        """
         items = self.catalogo[self.categorias.index(categoria)]
         res = [item["nombre"] for item in items["Opciones"]]
         if mostrar:
@@ -100,6 +131,16 @@ class GestorIngredientes:
         return res
 
     def obtener_tipo_en_categoria(self, categoria, mostrar=False):
+        """
+        Obtiene los ingredientes de un tipo específico dentro de una categoría.
+        
+        Args:
+            categoria (str): Nombre de la categoría
+            mostrar (bool): Si es True, muestra los resultados
+            
+        Retorna:
+            list: Lista de nombres de ingredientes del tipo especificado
+        """
         tipos_posibles, res = [], []
         indice_cat = self.categorias.index(categoria)
         # Primero obtener los tipos posibles en esta categoría
@@ -119,6 +160,19 @@ class GestorIngredientes:
         return res
 
     def agregar_ingrediente(self, cat, nombre, tipo, tamaño, unidad):
+        """
+        Agrega un nuevo ingrediente al catálogo.
+        
+        Args:
+            cat (str): Categoría del ingrediente
+            nombre (str): Nombre del ingrediente
+            tipo (str): Tipo del ingrediente
+            tamaño (float): Tamaño del ingrediente
+            unidad (str): Unidad de medida
+            
+        Retorna:
+            bool: True si se agregó exitosamente, False en caso contrario
+        """
         nuevo_item = {
             "nombre": nombre,
             "tipo": tipo,
@@ -151,6 +205,16 @@ class GestorIngredientes:
         return True
     
     def eliminar_ingrediente(self, categoria, nombre):
+         """
+        Elimina un ingrediente del catálogo.
+        
+        Args:
+            categoria (str): Categoría del ingrediente
+            nombre (str): Nombre del ingrediente
+            
+        Retorna:
+            bool: True si se eliminó exitosamente, False en caso contrario
+        """
         # Obtener el índice de la categoría
         indice_cat = self.categorias.index(categoria)
         for i, item in enumerate(self.catalogo[indice_cat]["Opciones"]):
@@ -174,6 +238,16 @@ class GestorIngredientes:
         return False
     
     def obtener_tamaño(self, categoria, nombre):
+        """
+        Obtiene el tamaño de un ingrediente específico.
+        
+        Args:
+            categoria (str): Categoría del ingrediente
+            nombre (str): Nombre del ingrediente
+            
+        Retorna:
+            int: Tamaño del ingrediente, o None si no se encuentra
+        """
         for item in self.catalogo[self.categorias.index(categoria)]["Opciones"]:
             if item["nombre"] == nombre:
                 return item["tamaño"]
@@ -181,6 +255,13 @@ class GestorIngredientes:
         return
 
     def guardar_ingredientes(self, output=""):
+        """
+        Guarda el catálogo de ingredientes en un archivo JSON.
+        
+        Args:
+            output (str): Nombre del archivo de salida. Si está vacío, 
+                         genera uno automáticamente con la fecha.
+        """
         if not output:
             fecha = date.today().strftime("%Y-%m-%d")
             output = f"ingredientes_{fecha}.json"
