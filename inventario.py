@@ -19,7 +19,7 @@ class Inventario:
     
     # Mostrar el stock de cada ingrediente
     def visualizar(self):
-        """ Imprime el stock actual. """
+      """ Imprime el stock actual. """
       for ingrediente, cantidad in self.stock.items():
         print(f"Stock de {ingrediente}: {cantidad}")
 
