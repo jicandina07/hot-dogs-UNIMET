@@ -7,15 +7,24 @@ from random import randint
 class Inventario:
 
     def __init__(self, gestor_ingredientes, menu):
+        """
+        Inicializa el inventario con los componentes del sistema.
+        
+        Args:
+            gestor_ingredientes: Instancia del gestor de ingredientes
+            menu: Instancia del menú
+        """
         self.gestor_ingredientes = gestor_ingredientes
         self.menu = menu
     
     # Mostrar el stock de cada ingrediente
     def visualizar(self):
+        """ Imprime el stock actual. """
       for ingrediente, cantidad in self.stock.items():
         print(f"Stock de {ingrediente}: {cantidad}")
 
     def mostrar_menu_principal(self):
+        """ Muestra las opciones principales de la clase. """
         print("")
         print("--- Gestión de inventario de UNIMET Hot Dogs ---")
         print("Opciones disponibles:")
@@ -27,6 +36,7 @@ class Inventario:
         print("6. Salir del gestor de inventario.")
 
     def gestionar(self):
+        """ Gestiona el menú principal del sistema de inventario. """
         while True:
             self.mostrar_menu_principal()
             opcion = obtener_opcion_usuario([str(i) for i in range(1, 7)])
@@ -79,6 +89,15 @@ class Inventario:
 
     # Verificar que haya stock disponible
     def revisar_stock(self, nombre_ingr):
+        """
+        Verifica si hay stock disponible de un ingrediente.
+        
+        Args:
+            nombre_ingr (str): Nombre del ingrediente a verificar
+            
+        Retorna:
+            bool: True si hay stock disponible, False en caso contrario
+        """
         try:
             return self.stock[nombre_ingr] > 0
         except KeyError:
@@ -86,6 +105,16 @@ class Inventario:
 
     # Restar del stock una cantidad de un ingrediente
     def restar_stock(self, nombre_ingr, cantidad):
+        """
+        Resta una cantidad del stock de un ingrediente.
+        
+        Args:
+            nombre_ingr (str): Nombre del ingrediente
+            cantidad (int): Cantidad a restar
+            
+        Retorna:
+            bool: True si se pudo restar, False en caso contrario
+        """
         try:
           if self.stock[nombre_ingr] > 0:
             self.stock[nombre_ingr] -= 1
@@ -98,6 +127,13 @@ class Inventario:
           return False
 
     def guardar_stock(self, output=""):
+        """
+        Guarda el stock actual en un archivo JSON.
+        
+        Args:
+            output (str): Nombre del archivo de salida. Si está vacío, 
+                         genera uno automáticamente con la fecha.
+        """
         # Generar un nombre del archivo con la fecha de hoy si no fue dado
         if not output:
             fecha = date.today().strftime("%Y-%m-%d")
@@ -110,6 +146,7 @@ class Inventario:
 
     # Generar un inventario al azar
     def generar_stock_aleatorio(self):
+        """ Genera un stock aleatorio para todos los ingredientes. """
         self.stock = {}
         # Generar un número aleatorio de stock para cada ingrediente
         for item in self.gestor_ingredientes.catalogo:
@@ -118,5 +155,11 @@ class Inventario:
 
     # Cargar estatus previo del código
     def cargar_stock_previo(self, archivo):
+        """
+        Carga un stock previo desde un archivo JSON.
+        
+        Args:
+            archivo (str): Ruta del archivo a cargar
+        """
         with open(archivo) as f:
             self.stock = json.load(f)
